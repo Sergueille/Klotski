@@ -22,15 +22,19 @@
         <div class="btn-list">
             <button class="circle" id="undo" onclick="Undo()">
                 <span class="material-symbols-outlined">undo</span>
-            </button>
-            <button class="circle" id="undo-ten" onclick="UndoMany(10)">
-                <span class="material-symbols-outlined">replay_10</span>
+                <div class="btn-info">Undo</div>
             </button>
             <button class="circle" id="redo" onclick="Redo()">
                 <span class="material-symbols-outlined">redo</span>
+                <div class="btn-info">Redo</div>
+            </button>
+            <button class="circle" id="undo-ten" onclick="UndoMany(10)">
+                <span class="material-symbols-outlined">replay_10</span>
+                <div class="btn-info">Undo 10 times</div>
             </button>
             <button class="circle" id="restart" onclick="UndoMany(10000)">
                 <span class="material-symbols-outlined">refresh</span>
+                <div class="btn-info">Restart</div>
             </button>
         </div>
     </div>

@@ -27,24 +27,46 @@ button, a.btn {
     padding: 5px 10px;
     margin: 5px;
     transition: 100ms;
+    position: relative;
 }
 
-button:hover, a.btn:hover {
+button:hover, .btn:hover {
     transform: scale(120%);
 }
 
-button:disabled, a.btn:disabled {
+button:disabled, .btn:disabled {
     transform: scale(90%) !important;
 }
 
-button:disabled > *, a.btn:disabled > * {
+button:disabled > *, .btn:disabled > * {
     color: var(--txt-d);
 }
 
-button.circle, a.btn.circle {
+button.circle, .btn.circle {
     border-radius: 100%;
     width: 3rem;
     height: 3rem;
+}
+
+.btn-info {
+    transition: 200ms;
+    position: absolute;
+    font-size: 1.5rem;
+    top: 50%;
+    left: calc(100% + 1.5rem);
+    width: 10rem;
+    transform: translate(-1rem, -50%);
+
+    text-align: start;
+
+    opacity: 0;
+
+    z-index: 50;
+}
+
+button:hover > .btn-info, .btn:hover > .btn-info {
+    transform: translate(0, -50%);
+    opacity: 100;
 }
 
 body {
