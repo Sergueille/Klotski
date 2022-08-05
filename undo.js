@@ -60,6 +60,7 @@ function Undo() {
     if (undoIndex < 1)
         return;
     undoIndex--;
+    moveCount--;
     ApplyUndoList(undoIndex);
 }
 // Undo the game many times
@@ -93,6 +94,7 @@ function Redo() {
     if (undoIndex >= undo.length - 1)
         return;
     undoIndex++;
+    moveCount++;
     ApplyUndoList(undoIndex);
 }
 // Apply an undo entry to the game
@@ -101,6 +103,7 @@ function ApplyUndoList(index) {
     for (var i = 0; i < l.length; i++) {
         tiles[i].setPos(l[i]);
     }
+    DisplayMoves();
     UpdateUndoBtns();
 }
 // Update undo btns appearance

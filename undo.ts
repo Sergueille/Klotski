@@ -29,6 +29,7 @@ function Undo() {
     if (undoIndex < 1) return;
 
     undoIndex--;
+    moveCount--;
     ApplyUndoList(undoIndex);
 }
 
@@ -46,6 +47,7 @@ function Redo() {
     if (undoIndex >= undo.length - 1) return;
 
     undoIndex++;
+    moveCount++;
     ApplyUndoList(undoIndex);
 }
 
@@ -57,6 +59,7 @@ function ApplyUndoList(index: number) {
         tiles[i].setPos(l[i]);
     }
     
+    DisplayMoves();
     UpdateUndoBtns();
 }
 

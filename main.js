@@ -99,8 +99,12 @@ var Block = /** @class */ (function () {
             deltaTile.y = 0;
         obj.element.style.transition = "200ms";
         this.setPos(this.pos.add(deltaTile));
-        if (deltaTile.x != 0 || deltaTile.y != 0)
+        // If actuallly changed position
+        if (deltaTile.x != 0 || deltaTile.y != 0) {
             RecordUndo();
+            moveCount++;
+            DisplayMoves();
+        }
     };
     // While dragging, returns the maximum pixel position of the tile in the given direction
     // FIXME: not working with multiple tiles (?)
@@ -114,7 +118,6 @@ var Block = /** @class */ (function () {
                 var deltaTile = myTile.add(delta);
                 if (deltaTile.x < 0 || deltaTile.y < 0 || deltaTile.x >= areaSize.x || deltaTile.y >= areaSize.y) {
                     passed = false;
-                    console.log("out of grid!");
                     break;
                 }
                 for (var _b = 0, tiles_1 = tiles; _b < tiles_1.length; _b++) {
@@ -125,7 +128,6 @@ var Block = /** @class */ (function () {
                         var otherBlockTile = _d[_c];
                         if (otherBlockTile.isEq(deltaTile)) {
                             passed = false;
-                            console.log("on other tile! " + deltaTile.x.toString() + ", " + deltaTile.y.toString());
                             break;
                         }
                     }
@@ -139,7 +141,6 @@ var Block = /** @class */ (function () {
                 break;
         }
         delta = delta.sub(dir);
-        console.log(delta);
         return this.getPos().add(delta).mult(tileSize);
     };
     // Get all the tiles that this block covers
@@ -156,13 +157,33 @@ var Block = /** @class */ (function () {
 }());
 // (Re)Starts the game!
 function StartGame() {
+    tiles = [
+        new Block(new vec2(0, 3), new vec2(1, 2)),
+        new Block(new vec2(3, 3), new vec2(1, 2)),
+        new Block(new vec2(1, 4), new vec2(1)),
+        new Block(new vec2(1, 3), new vec2(1)),
+        new Block(new vec2(2, 4), new vec2(1)),
+        new Block(new vec2(2, 3), new vec2(1)),
+        new Block(new vec2(1, 2), new vec2(2, 1)),
+        new Block(new vec2(0, 0), new vec2(1, 2)),
+        new Block(new vec2(3, 0), new vec2(1, 2)),
+        new Block(new vec2(1, 0), new vec2(2), true),
+    ];
+    moveCount = 0;
+    DisplayMoves();
     undoIndex = -1;
     undo = [];
     RecordUndo();
     UpdateUndoBtns();
 }
+function DisplayMoves() {
+    moveCountText.innerHTML = moveCount;
+    moveCountLabel.innerHTML = moveCount === 1 ? "move" : "moves";
+}
 // Get elements
 var area = document.getElementById("area");
+var moveCountText = document.getElementById("move-count");
+var moveCountLabel = document.getElementById("move-count-label");
 // Create bg tiles
 for (var i = 0; i < 20; i++) {
     var newEl = document.createElement("div");
@@ -172,22 +193,12 @@ for (var i = 0; i < 20; i++) {
 // Get tile size
 var tileSize = document.querySelector(".bg-tile").clientWidth + 10;
 // Create tiles
-var tiles = [
-    new Block(new vec2(0, 3), new vec2(1, 2)),
-    new Block(new vec2(3, 3), new vec2(1, 2)),
-    new Block(new vec2(1, 4), new vec2(1)),
-    new Block(new vec2(1, 3), new vec2(1)),
-    new Block(new vec2(2, 4), new vec2(1)),
-    new Block(new vec2(2, 3), new vec2(1)),
-    new Block(new vec2(1, 2), new vec2(2, 1)),
-    new Block(new vec2(0, 0), new vec2(1, 2)),
-    new Block(new vec2(3, 0), new vec2(1, 2)),
-    new Block(new vec2(1, 0), new vec2(2), true),
-];
+var tiles;
 var draggedBlock = null;
 document.body.addEventListener("dragover", function (event) {
     draggedBlock.onDrag(draggedBlock, event);
 });
+var moveCount;
 // Consts
 var areaSize = new vec2(4, 5);
 var undoDelay = 50;
