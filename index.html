@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>Casse tête</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script src="util.js" defer="defer"></script>
+    <script src="undo.js" defer="defer"></script>
+    <script src="main.js" defer="defer"></script>
+</head>
+<body>
+    <div id="area">
+    </div>
+    <div class="right">
+        <div class="moves">
+            <span id="move-count">99</span><br>
+            mouvements
+        </div>
+        <div class="btn-list">
+            <button class="circle" id="undo" onclick="Undo()">
+                <span class="material-symbols-outlined">undo</span>
+            </button>
+            <button class="circle" id="undo-ten" onclick="UndoMany(10)">
+                <span class="material-symbols-outlined">replay_10</span>
+            </button>
+            <button class="circle" id="redo" onclick="Redo()">
+                <span class="material-symbols-outlined">redo</span>
+            </button>
+            <button class="circle" id="restart" onclick="UndoMany(10000)">
+                <span class="material-symbols-outlined">refresh</span>
+            </button>
+        </div>
+    </div>
+</body>
+</html>

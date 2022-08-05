@@ -1,0 +1,114 @@
+* {
+    --bg: #151515;
+    --bg-l: #222;
+    --bg-ll: #252525;
+    --bg-lll: #333;
+
+    --txt: #ccc;
+    --txt-d: #888;
+
+    --tile-size: 15vh;
+
+    color: var(--txt);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+}
+
+button, a.btn {
+    background-color: var(--bg-lll);
+    border: none;
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin: 5px;
+    transition: 100ms;
+}
+
+button:hover, a.btn:hover {
+    transform: scale(120%);
+}
+
+button:disabled, a.btn:disabled {
+    transform: scale(90%) !important;
+}
+
+button:disabled > *, a.btn:disabled > * {
+    color: var(--txt-d);
+}
+
+button.circle, a.btn.circle {
+    border-radius: 100%;
+    width: 3rem;
+    height: 3rem;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+
+    background-color: var(--bg);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#area {
+    background-color: var(--bg-l);
+    border-radius: 20px;
+
+    height: calc(var(--tile-size) * 5 + 60px);
+    width: calc(var(--tile-size) * 4 + 50px);
+    position: relative;
+    margin: 50px;
+
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    padding: 5px;
+}
+
+.bg-tile {
+    background-color: var(--bg-ll);
+    border-radius: 10px;
+    margin: 5px;
+}
+
+.block {
+    position: absolute;
+    border-radius: 15px;
+    transition: 200ms;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.btn-list {
+    background-color: var(--bg-l);
+    border-radius: calc(1.5rem + 10px);
+
+    padding: 5px;
+    margin: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.moves {
+    text-align: center;
+}
+
+#move-count {
+    font-size: 2rem;
+    font-weight: 1000;
+}
