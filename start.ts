@@ -1,1 +1,1 @@
-StartGame(1)
+StartGame(0)

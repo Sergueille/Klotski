@@ -12,7 +12,8 @@ var _loop_1 = function (i) {
     newEl.id = newID;
     newEl.addEventListener("click", function () { return StartGame(i); });
     variantList.appendChild(newEl);
-    document.querySelector("#" + newID + " > .variant-title").innerHTML = obj.name;
+    document.querySelector("#" + newID + " > .tile-list-txt > .variant-title").innerHTML = obj.name;
+    document.querySelector("#" + newID + " > .tile-list-txt > .variant-difficulty").innerHTML = obj.difficulty;
     var icon = document.querySelector("#" + newID + " > .tile-icon");
     var smallTileSize = (icon.clientHeight - 10) / 5;
     for (var _i = 0, _a = obj.tiles; _i < _a.length; _i++) {

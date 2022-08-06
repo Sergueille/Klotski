@@ -17,7 +17,8 @@ for (let i = 0; i < data.length; i++) {
     newEl.addEventListener("click", () => StartGame(i))
     variantList.appendChild(newEl);
 
-    document.querySelector("#" + newID + " > .variant-title").innerHTML = obj.name;
+    document.querySelector("#" + newID + " > .tile-list-txt > .variant-title").innerHTML = obj.name;
+    document.querySelector("#" + newID + " > .tile-list-txt > .variant-difficulty").innerHTML = obj.difficulty;
 
     let icon = document.querySelector("#" + newID + " > .tile-icon") as HTMLElement;
     let smallTileSize = (icon.clientHeight - 10) / 5;
