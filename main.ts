@@ -4,41 +4,56 @@ class Block {
     public size: vec2; // The size of the tile, in tiles
     public element: HTMLElement; // The HTMLElement of the tile
     public isExit: boolean; // Is this tile the big red tile?
+    private displayed: boolean = false; // Has the tile en HTMLElement
 
     private dragStartMousePos: vec2; // Position of the mouse when the drag started
     private dragStartPixelPos: vec2; // Position, in pixels, of the block element when the drag started
     private dragDirection: boolean | null; // true is vertical
 
     constructor(pos: vec2, size: vec2, isExit: boolean = false) {
+        this.pos = pos;
         this.size = size;
-        this.isExit = this.isExit;
-
-        // Create element
-        this.element = document.createElement("div");
-        this.element.classList.add("block");
-        this.element.draggable = true;
-        area.appendChild(this.element);
-
-        // Set scale
-        this.element.style.width = (this.size.x * tileSize) + "px";
-        this.element.style.height = (this.size.y * tileSize) + "px";
-
-        // Set color
-        if (isExit) {
-            this.element.style.backgroundColor = "#502020"
-        }
-        else {
-            let randColorVal: number = Math.round(Math.random() * (45 - 30) + 30); 
-            this.element.style.backgroundColor = "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
-        }
-
-        // Assign events
-        this.element.addEventListener("dragstart", ev => this.onStartDrag(this, ev));
-        this.element.addEventListener("dragend", ev => this.onEndDrag(this, ev));
-
-        // Ste positon
-        this.setPos(pos);
+        this.isExit = isExit;
     }
+
+    setDisplay(newValue: boolean) {
+        if (newValue === this.displayed) return;
+        this.displayed = newValue
+
+        if (this.displayed) {
+            // Create element
+            this.element = document.createElement("div");
+            this.element.classList.add("block");
+            this.element.draggable = true;
+            area.appendChild(this.element);
+
+            // Set scale
+            this.element.style.width = (this.size.x * tileSize) + "px";
+            this.element.style.height = (this.size.y * tileSize) + "px";
+            
+            // Set color
+            if (this.isExit) {
+                this.element.style.backgroundColor = "#502020"
+            }
+            else {
+                let randColorVal: number = Math.round(Math.random() * (45 - 30) + 30); 
+                this.element.style.backgroundColor = "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
+            }
+            
+            // Assign events
+            this.element.addEventListener("dragstart", ev => this.onStartDrag(this, ev));
+            this.element.addEventListener("dragend", ev => this.onEndDrag(this, ev));
+
+            // Set positon
+            this.setPos(this.pos);
+        } 
+        else {
+            this.element.remove();
+            this.element = null;
+        }
+    }
+
+    isDisplayed() { return this.displayed }
 
     // Set tile position and update visual positon
     setPos(newPos: vec2) {
@@ -48,12 +63,14 @@ class Block {
 
     // Set visual position, in tiles
     setVisualPos(newPos: vec2) {
+        if (!this.displayed) return;
         this.element.style.left = (newPos.x * tileSize) + 5 + "px";
         this.element.style.top = (newPos.y * tileSize) + 5 + "px";
     }
 
     // Set visual position, in pixels
     setVisualPixelPos(newPos: vec2) {
+        if (!this.displayed) return;
         this.element.style.left = (newPos.x) + 5 + "px";
         this.element.style.top = (newPos.y) + 5 + "px";
     }
@@ -63,8 +80,9 @@ class Block {
         return this.pos.copy();
     }
 
-    // Get element positioons, in pixels
+    // Get element positions, in pixels
     getPixelPos() {
+        if (!this.displayed) return new vec2(0);
         return new vec2(this.element.offsetLeft - 5, this.element.offsetTop - 5);
     }
 
@@ -129,7 +147,7 @@ class Block {
         if (deltaTile.x != 0 || deltaTile.y != 0)
         {
             RecordUndo();
-            moveCount++;
+            currentData.moveCount++;
             DisplayMoves();
         }
     }
@@ -149,7 +167,7 @@ class Block {
                     break;
                 }
 
-                for (const otherBlock of tiles) {
+                for (const otherBlock of currentData.tiles) {
                     if (otherBlock.pos.isEq(this.pos))
                         continue;
 
@@ -183,33 +201,51 @@ class Block {
     }
 }
 
-// (Re)Starts the game!
-function StartGame() {
-    tiles = [
-        new Block(new vec2(0, 3), new vec2(1, 2)),
-        new Block(new vec2(3, 3), new vec2(1, 2)),
-        new Block(new vec2(1, 4), new vec2(1)),
-        new Block(new vec2(1, 3), new vec2(1)),
-        new Block(new vec2(2, 4), new vec2(1)),
-        new Block(new vec2(2, 3), new vec2(1)),
-        new Block(new vec2(1, 2), new vec2(2, 1)),
-        new Block(new vec2(0, 0), new vec2(1, 2)),
-        new Block(new vec2(3, 0), new vec2(1, 2)),
-        new Block(new vec2(1, 0), new vec2(2), true),
-    ]
-
-    moveCount = 0;
-    DisplayMoves();
-
-    undoIndex = -1;
-    undo = [];
-    RecordUndo();
-    UpdateUndoBtns();
+class GameData {
+    public undoIndex: number = -1;
+    public undo: Array<Array<vec2>> = [];
+    public moveCount: number = 0;
+    public tiles: Array<Block> = [];
 }
 
+// (Re)Starts the game!
+function StartGame(index: number) {
+    // Destor previous tiles
+    if (currentData !== undefined) {
+        for (const tile of currentData.tiles) {
+            tile.setDisplay(false);
+        }
+    }
+
+    if (data[index]["gameData"] === null) {
+
+        // Init new game
+        data[index]["gameData"] = new GameData();
+        currentData = data[index]["gameData"];
+        currentData.undo = [];
+
+        for (const tile of data[index]["tiles"]) {
+            tile.setDisplay(true);
+            currentData.tiles.push(tile);
+        }
+        
+        RecordUndo();
+    }
+    else {
+        currentData = data[index]["gameData"];
+        for (const tile of currentData.tiles) {
+            tile.setDisplay(true);
+        }
+    }
+
+    UpdateUndoBtns();
+    DisplayMoves();
+}
+
+// Update move counter
 function DisplayMoves() {
-    moveCountText.innerHTML = moveCount;
-    moveCountLabel.innerHTML = moveCount === 1? "move" : "moves"; 
+    moveCountText.innerHTML = currentData.moveCount.toString();
+    moveCountLabel.innerHTML = currentData.moveCount === 1? "move" : "moves"; 
 }
 
 // Get elements
@@ -227,18 +263,13 @@ for (let i = 0; i < 20; i++) {
 // Get tile size
 const tileSize = document.querySelector(".bg-tile")!!.clientWidth + 10;
 
-// Create tiles
-let tiles; 
-
 let draggedBlock: Block = null;
 document.body.addEventListener("dragover", event => {
     draggedBlock.onDrag(draggedBlock, event);
 });
 
-let moveCount;
-
 // Consts
 const areaSize = new vec2(4, 5);
 const undoDelay = 50;
 
-StartGame()
+let currentData: GameData;

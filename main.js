@@ -2,31 +2,45 @@
 var Block = /** @class */ (function () {
     function Block(pos, size, isExit) {
         if (isExit === void 0) { isExit = false; }
-        var _this = this;
+        this.displayed = false; // Has the tile en HTMLElement
+        this.pos = pos;
         this.size = size;
-        this.isExit = this.isExit;
-        // Create element
-        this.element = document.createElement("div");
-        this.element.classList.add("block");
-        this.element.draggable = true;
-        area.appendChild(this.element);
-        // Set scale
-        this.element.style.width = (this.size.x * tileSize) + "px";
-        this.element.style.height = (this.size.y * tileSize) + "px";
-        // Set color
-        if (isExit) {
-            this.element.style.backgroundColor = "#502020";
+        this.isExit = isExit;
+    }
+    Block.prototype.setDisplay = function (newValue) {
+        var _this = this;
+        if (newValue === this.displayed)
+            return;
+        this.displayed = newValue;
+        if (this.displayed) {
+            // Create element
+            this.element = document.createElement("div");
+            this.element.classList.add("block");
+            this.element.draggable = true;
+            area.appendChild(this.element);
+            // Set scale
+            this.element.style.width = (this.size.x * tileSize) + "px";
+            this.element.style.height = (this.size.y * tileSize) + "px";
+            // Set color
+            if (this.isExit) {
+                this.element.style.backgroundColor = "#502020";
+            }
+            else {
+                var randColorVal = Math.round(Math.random() * (45 - 30) + 30);
+                this.element.style.backgroundColor = "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
+            }
+            // Assign events
+            this.element.addEventListener("dragstart", function (ev) { return _this.onStartDrag(_this, ev); });
+            this.element.addEventListener("dragend", function (ev) { return _this.onEndDrag(_this, ev); });
+            // Set positon
+            this.setPos(this.pos);
         }
         else {
-            var randColorVal = Math.round(Math.random() * (45 - 30) + 30);
-            this.element.style.backgroundColor = "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
+            this.element.remove();
+            this.element = null;
         }
-        // Assign events
-        this.element.addEventListener("dragstart", function (ev) { return _this.onStartDrag(_this, ev); });
-        this.element.addEventListener("dragend", function (ev) { return _this.onEndDrag(_this, ev); });
-        // Ste positon
-        this.setPos(pos);
-    }
+    };
+    Block.prototype.isDisplayed = function () { return this.displayed; };
     // Set tile position and update visual positon
     Block.prototype.setPos = function (newPos) {
         this.pos = newPos.copy();
@@ -34,11 +48,15 @@ var Block = /** @class */ (function () {
     };
     // Set visual position, in tiles
     Block.prototype.setVisualPos = function (newPos) {
+        if (!this.displayed)
+            return;
         this.element.style.left = (newPos.x * tileSize) + 5 + "px";
         this.element.style.top = (newPos.y * tileSize) + 5 + "px";
     };
     // Set visual position, in pixels
     Block.prototype.setVisualPixelPos = function (newPos) {
+        if (!this.displayed)
+            return;
         this.element.style.left = (newPos.x) + 5 + "px";
         this.element.style.top = (newPos.y) + 5 + "px";
     };
@@ -46,8 +64,10 @@ var Block = /** @class */ (function () {
     Block.prototype.getPos = function () {
         return this.pos.copy();
     };
-    // Get element positioons, in pixels
+    // Get element positions, in pixels
     Block.prototype.getPixelPos = function () {
+        if (!this.displayed)
+            return new vec2(0);
         return new vec2(this.element.offsetLeft - 5, this.element.offsetTop - 5);
     };
     // Called by event (in constructor)
@@ -102,7 +122,7 @@ var Block = /** @class */ (function () {
         // If actuallly changed position
         if (deltaTile.x != 0 || deltaTile.y != 0) {
             RecordUndo();
-            moveCount++;
+            currentData.moveCount++;
             DisplayMoves();
         }
     };
@@ -120,12 +140,12 @@ var Block = /** @class */ (function () {
                     passed = false;
                     break;
                 }
-                for (var _b = 0, tiles_1 = tiles; _b < tiles_1.length; _b++) {
-                    var otherBlock = tiles_1[_b];
+                for (var _b = 0, _c = currentData.tiles; _b < _c.length; _b++) {
+                    var otherBlock = _c[_b];
                     if (otherBlock.pos.isEq(this.pos))
                         continue;
-                    for (var _c = 0, _d = otherBlock.getAllTiles(); _c < _d.length; _c++) {
-                        var otherBlockTile = _d[_c];
+                    for (var _d = 0, _e = otherBlock.getAllTiles(); _d < _e.length; _d++) {
+                        var otherBlockTile = _e[_d];
                         if (otherBlockTile.isEq(deltaTile)) {
                             passed = false;
                             break;
@@ -155,30 +175,50 @@ var Block = /** @class */ (function () {
     };
     return Block;
 }());
+var GameData = /** @class */ (function () {
+    function GameData() {
+        this.undoIndex = -1;
+        this.undo = [];
+        this.moveCount = 0;
+        this.tiles = [];
+    }
+    return GameData;
+}());
 // (Re)Starts the game!
-function StartGame() {
-    tiles = [
-        new Block(new vec2(0, 3), new vec2(1, 2)),
-        new Block(new vec2(3, 3), new vec2(1, 2)),
-        new Block(new vec2(1, 4), new vec2(1)),
-        new Block(new vec2(1, 3), new vec2(1)),
-        new Block(new vec2(2, 4), new vec2(1)),
-        new Block(new vec2(2, 3), new vec2(1)),
-        new Block(new vec2(1, 2), new vec2(2, 1)),
-        new Block(new vec2(0, 0), new vec2(1, 2)),
-        new Block(new vec2(3, 0), new vec2(1, 2)),
-        new Block(new vec2(1, 0), new vec2(2), true),
-    ];
-    moveCount = 0;
-    DisplayMoves();
-    undoIndex = -1;
-    undo = [];
-    RecordUndo();
+function StartGame(index) {
+    // Destor previous tiles
+    if (currentData !== undefined) {
+        for (var _i = 0, _a = currentData.tiles; _i < _a.length; _i++) {
+            var tile = _a[_i];
+            tile.setDisplay(false);
+        }
+    }
+    if (data[index]["gameData"] === null) {
+        // Init new game
+        data[index]["gameData"] = new GameData();
+        currentData = data[index]["gameData"];
+        currentData.undo = [];
+        for (var _b = 0, _c = data[index]["tiles"]; _b < _c.length; _b++) {
+            var tile = _c[_b];
+            tile.setDisplay(true);
+            currentData.tiles.push(tile);
+        }
+        RecordUndo();
+    }
+    else {
+        currentData = data[index]["gameData"];
+        for (var _d = 0, _e = currentData.tiles; _d < _e.length; _d++) {
+            var tile = _e[_d];
+            tile.setDisplay(true);
+        }
+    }
     UpdateUndoBtns();
+    DisplayMoves();
 }
+// Update move counter
 function DisplayMoves() {
-    moveCountText.innerHTML = moveCount;
-    moveCountLabel.innerHTML = moveCount === 1 ? "move" : "moves";
+    moveCountText.innerHTML = currentData.moveCount.toString();
+    moveCountLabel.innerHTML = currentData.moveCount === 1 ? "move" : "moves";
 }
 // Get elements
 var area = document.getElementById("area");
@@ -192,14 +232,11 @@ for (var i = 0; i < 20; i++) {
 }
 // Get tile size
 var tileSize = document.querySelector(".bg-tile").clientWidth + 10;
-// Create tiles
-var tiles;
 var draggedBlock = null;
 document.body.addEventListener("dragover", function (event) {
     draggedBlock.onDrag(draggedBlock, event);
 });
-var moveCount;
 // Consts
 var areaSize = new vec2(4, 5);
 var undoDelay = 50;
-StartGame();
+var currentData;

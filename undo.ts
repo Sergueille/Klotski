@@ -1,7 +1,3 @@
-// Init undo list
-let undoIndex: number = -1;
-let undo: Array<Array<vec2>> = []
-
 // Get elements
 const undoBtn = document.getElementById("undo")!!;
 const redoBtn = document.getElementById("redo")!!;
@@ -11,32 +7,32 @@ const restartBtn = document.getElementById("restart")!!;
 // Add an entry in the undo list
 function RecordUndo() {
     let posList: Array<vec2> = [];
-    for (const tile of tiles) {
+    for (const tile of currentData.tiles) {
         posList.push(tile.getPos());
     }
 
-    if (undoIndex < undo.length - 1)
-        undo = undo.slice(0, undoIndex + 1)
+    if (currentData.undoIndex < currentData.undo.length - 1)
+        currentData.undo = currentData.undo.slice(0, currentData.undoIndex + 1)
 
-    undo.push(posList)
-    undoIndex++;
+    currentData.undo.push(posList)
+    currentData.undoIndex++;
     
     UpdateUndoBtns();
 }
 
 // Undo the game
 function Undo() {
-    if (undoIndex < 1) return;
+    if (currentData.undoIndex < 1) return;
 
-    undoIndex--;
-    moveCount--;
-    ApplyUndoList(undoIndex);
+    currentData.undoIndex--;
+    currentData.moveCount--;
+    ApplyUndoList(currentData.undoIndex);
 }
 
 // Undo the game many times
 async function UndoMany(count: number) {
     for (let i = 0; i < count; i++) {
-        if (undoIndex < 1) return;
+        if (currentData.undoIndex < 1) return;
         Undo();
         await delay(undoDelay);
     }
@@ -44,19 +40,19 @@ async function UndoMany(count: number) {
 
 // Redo the game
 function Redo() {
-    if (undoIndex >= undo.length - 1) return;
+    if (currentData.undoIndex >= currentData.undo.length - 1) return;
 
-    undoIndex++;
-    moveCount++;
-    ApplyUndoList(undoIndex);
+    currentData.undoIndex++;
+    currentData.moveCount++;
+    ApplyUndoList(currentData.undoIndex);
 }
 
 // Apply an undo entry to the game
 function ApplyUndoList(index: number) {
-    let l = undo[index];
+    let l = currentData.undo[index];
 
     for (let i = 0; i < l.length; i++) {
-        tiles[i].setPos(l[i]);
+        currentData.tiles[i].setPos(l[i]);
     }
     
     DisplayMoves();
@@ -65,7 +61,7 @@ function ApplyUndoList(index: number) {
 
 // Update undo btns appearance
 function UpdateUndoBtns() {
-    if (undoIndex < 1) {
+    if (currentData.undoIndex < 1) {
         undoBtn.setAttribute("disabled", "true");
         restartBtn.setAttribute("disabled", "true");
         undoTenBtn.setAttribute("disabled", "true");
@@ -76,7 +72,7 @@ function UpdateUndoBtns() {
         undoTenBtn.removeAttribute("disabled");
     }
 
-    if (undoIndex >= undo.length - 1)
+    if (currentData.undoIndex >= currentData.undo.length - 1)
         redoBtn.setAttribute("disabled", "true")
     else
         redoBtn.removeAttribute("disabled")

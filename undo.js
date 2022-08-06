@@ -34,9 +34,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-// Init undo list
-var undoIndex = -1;
-var undo = [];
 // Get elements
 var undoBtn = document.getElementById("undo");
 var redoBtn = document.getElementById("redo");
@@ -45,23 +42,23 @@ var restartBtn = document.getElementById("restart");
 // Add an entry in the undo list
 function RecordUndo() {
     var posList = [];
-    for (var _i = 0, tiles_1 = tiles; _i < tiles_1.length; _i++) {
-        var tile = tiles_1[_i];
+    for (var _i = 0, _a = currentData.tiles; _i < _a.length; _i++) {
+        var tile = _a[_i];
         posList.push(tile.getPos());
     }
-    if (undoIndex < undo.length - 1)
-        undo = undo.slice(0, undoIndex + 1);
-    undo.push(posList);
-    undoIndex++;
+    if (currentData.undoIndex < currentData.undo.length - 1)
+        currentData.undo = currentData.undo.slice(0, currentData.undoIndex + 1);
+    currentData.undo.push(posList);
+    currentData.undoIndex++;
     UpdateUndoBtns();
 }
 // Undo the game
 function Undo() {
-    if (undoIndex < 1)
+    if (currentData.undoIndex < 1)
         return;
-    undoIndex--;
-    moveCount--;
-    ApplyUndoList(undoIndex);
+    currentData.undoIndex--;
+    currentData.moveCount--;
+    ApplyUndoList(currentData.undoIndex);
 }
 // Undo the game many times
 function UndoMany(count) {
@@ -74,7 +71,7 @@ function UndoMany(count) {
                     _a.label = 1;
                 case 1:
                     if (!(i < count)) return [3 /*break*/, 4];
-                    if (undoIndex < 1)
+                    if (currentData.undoIndex < 1)
                         return [2 /*return*/];
                     Undo();
                     return [4 /*yield*/, delay(undoDelay)];
@@ -91,24 +88,24 @@ function UndoMany(count) {
 }
 // Redo the game
 function Redo() {
-    if (undoIndex >= undo.length - 1)
+    if (currentData.undoIndex >= currentData.undo.length - 1)
         return;
-    undoIndex++;
-    moveCount++;
-    ApplyUndoList(undoIndex);
+    currentData.undoIndex++;
+    currentData.moveCount++;
+    ApplyUndoList(currentData.undoIndex);
 }
 // Apply an undo entry to the game
 function ApplyUndoList(index) {
-    var l = undo[index];
+    var l = currentData.undo[index];
     for (var i = 0; i < l.length; i++) {
-        tiles[i].setPos(l[i]);
+        currentData.tiles[i].setPos(l[i]);
     }
     DisplayMoves();
     UpdateUndoBtns();
 }
 // Update undo btns appearance
 function UpdateUndoBtns() {
-    if (undoIndex < 1) {
+    if (currentData.undoIndex < 1) {
         undoBtn.setAttribute("disabled", "true");
         restartBtn.setAttribute("disabled", "true");
         undoTenBtn.setAttribute("disabled", "true");
@@ -118,7 +115,7 @@ function UpdateUndoBtns() {
         restartBtn.removeAttribute("disabled");
         undoTenBtn.removeAttribute("disabled");
     }
-    if (undoIndex >= undo.length - 1)
+    if (currentData.undoIndex >= currentData.undo.length - 1)
         redoBtn.setAttribute("disabled", "true");
     else
         redoBtn.removeAttribute("disabled");
