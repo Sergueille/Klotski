@@ -7,8 +7,9 @@ var Block = /** @class */ (function () {
         this.size = size;
         this.isExit = isExit;
     }
-    Block.prototype.setDisplay = function (newValue) {
+    Block.prototype.setDisplay = function (newValue, parent) {
         var _this = this;
+        if (parent === void 0) { parent = null; }
         if (newValue === this.displayed)
             return;
         this.displayed = newValue;
@@ -17,18 +18,12 @@ var Block = /** @class */ (function () {
             this.element = document.createElement("div");
             this.element.classList.add("block");
             this.element.draggable = true;
-            area.appendChild(this.element);
+            parent.appendChild(this.element);
             // Set scale
             this.element.style.width = (this.size.x * tileSize) + "px";
             this.element.style.height = (this.size.y * tileSize) + "px";
             // Set color
-            if (this.isExit) {
-                this.element.style.backgroundColor = "#502020";
-            }
-            else {
-                var randColorVal = Math.round(Math.random() * (45 - 30) + 30);
-                this.element.style.backgroundColor = "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
-            }
+            this.element.style.backgroundColor = this.getTileColor();
             // Assign events
             this.element.addEventListener("dragstart", function (ev) { return _this.onStartDrag(_this, ev); });
             this.element.addEventListener("dragend", function (ev) { return _this.onEndDrag(_this, ev); });
@@ -38,6 +33,30 @@ var Block = /** @class */ (function () {
         else {
             this.element.remove();
             this.element = null;
+        }
+    };
+    // Create a small HTMLElement of the tile, to show in side panels
+    Block.prototype.smallDisplay = function (parent, tileSize) {
+        // Create element
+        var smallEL = document.createElement("div");
+        smallEL.classList.add("small-block");
+        parent.appendChild(smallEL);
+        // Set scale
+        smallEL.style.width = (this.size.x * tileSize) + "px";
+        smallEL.style.height = (this.size.y * tileSize) + "px";
+        // Set pos
+        smallEL.style.left = (this.pos.x * tileSize) + 5 + "px";
+        smallEL.style.top = (this.pos.y * tileSize) + 5 + "px";
+        smallEL.style.backgroundColor = this.getTileColor();
+    };
+    Block.prototype.getTileColor = function () {
+        // Set color
+        if (this.isExit) {
+            return "#502020";
+        }
+        else {
+            var randColorVal = Math.round(Math.random() * (45 - 30) + 30);
+            return "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
         }
     };
     Block.prototype.isDisplayed = function () { return this.displayed; };
@@ -200,7 +219,7 @@ function StartGame(index) {
         currentData.undo = [];
         for (var _b = 0, _c = data[index]["tiles"]; _b < _c.length; _b++) {
             var tile = _c[_b];
-            tile.setDisplay(true);
+            tile.setDisplay(true, area);
             currentData.tiles.push(tile);
         }
         RecordUndo();
@@ -209,7 +228,7 @@ function StartGame(index) {
         currentData = data[index]["gameData"];
         for (var _d = 0, _e = currentData.tiles; _d < _e.length; _d++) {
             var tile = _e[_d];
-            tile.setDisplay(true);
+            tile.setDisplay(true, area);
         }
     }
     UpdateUndoBtns();

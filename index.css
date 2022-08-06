@@ -111,6 +111,11 @@ body {
     transition: 200ms;
 }
 
+.small-block {
+    position: absolute;
+    border-radius: 5px;
+}
+
 .right {
     display: flex;
     align-items: center;
@@ -165,8 +170,14 @@ body {
 }
 
 .panel-title {
-    margin: 0 0 10px 0;
+    margin: 0 0 20px 0;
     font-size: 2rem;
+}
+
+.panel-close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
 }
 
 .tile-list {
@@ -176,7 +187,7 @@ body {
 .tile-list > li {
     background-color: var(--bg-ll);
     list-style: none;
-    border-radius: 15px;
+    border-radius: 20px;
     transition: 200ms;
 
     height: 8rem;
@@ -189,18 +200,19 @@ body {
 }
 
 .tile-list > li:hover {
-    background-color: var(--bg);
+    background-color: var(--bg-lll);
 }
 
 .tile-icon {
-    border-radius: 5px;
-    background-color: var(--bg-lll);
+    position: relative;
+    border-radius: 10px;
+    background-color: var(--bg-l);
     height: 100%;
-    width: calc(8rem - 20px);
+    width: calc((8rem - 20px - 10px) / 5 * 4 + 10px);
     padding: 5px;
 }
 
 .tile-list > li > p {
-    margin-left: 10px;
+    margin-left: 20px;
     font-size: 1.5rem;
 }

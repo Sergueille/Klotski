@@ -16,7 +16,7 @@ class Block {
         this.isExit = isExit;
     }
 
-    setDisplay(newValue: boolean) {
+    setDisplay(newValue: boolean, parent: HTMLElement = null) {
         if (newValue === this.displayed) return;
         this.displayed = newValue
 
@@ -25,20 +25,14 @@ class Block {
             this.element = document.createElement("div");
             this.element.classList.add("block");
             this.element.draggable = true;
-            area.appendChild(this.element);
+            parent.appendChild(this.element);
 
             // Set scale
             this.element.style.width = (this.size.x * tileSize) + "px";
             this.element.style.height = (this.size.y * tileSize) + "px";
             
             // Set color
-            if (this.isExit) {
-                this.element.style.backgroundColor = "#502020"
-            }
-            else {
-                let randColorVal: number = Math.round(Math.random() * (45 - 30) + 30); 
-                this.element.style.backgroundColor = "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
-            }
+            this.element.style.backgroundColor = this.getTileColor();
             
             // Assign events
             this.element.addEventListener("dragstart", ev => this.onStartDrag(this, ev));
@@ -50,6 +44,34 @@ class Block {
         else {
             this.element.remove();
             this.element = null;
+        }
+    }
+
+    // Create a small HTMLElement of the tile, to show in side panels
+    smallDisplay(parent: HTMLElement, tileSize: number) {
+        // Create element
+        let smallEL = document.createElement("div");
+        smallEL.classList.add("small-block");
+        parent.appendChild(smallEL);
+
+        // Set scale
+        smallEL.style.width = (this.size.x * tileSize) + "px";
+        smallEL.style.height = (this.size.y * tileSize) + "px";
+        // Set pos
+        smallEL.style.left = (this.pos.x * tileSize) + 5 + "px";
+        smallEL.style.top = (this.pos.y * tileSize) + 5 + "px";
+
+        smallEL.style.backgroundColor = this.getTileColor();
+    }
+
+    getTileColor() {
+        // Set color
+        if (this.isExit) {
+            return "#502020"
+        }
+        else {
+            let randColorVal: number = Math.round(Math.random() * (45 - 30) + 30); 
+            return "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
         }
     }
 
@@ -225,16 +247,16 @@ function StartGame(index: number) {
         currentData.undo = [];
 
         for (const tile of data[index]["tiles"]) {
-            tile.setDisplay(true);
+            tile.setDisplay(true, area);
             currentData.tiles.push(tile);
         }
-        
+
         RecordUndo();
     }
     else {
         currentData = data[index]["gameData"];
         for (const tile of currentData.tiles) {
-            tile.setDisplay(true);
+            tile.setDisplay(true, area);
         }
     }
 
