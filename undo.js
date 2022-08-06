@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var undoBtn = document.getElementById("undo");
 var redoBtn = document.getElementById("redo");
 var undoTenBtn = document.getElementById("undo-ten");
+var redoTenBtn = document.getElementById("redo-ten");
 var restartBtn = document.getElementById("restart");
 // Add an entry in the undo list
 function RecordUndo() {
@@ -94,6 +95,32 @@ function Redo() {
     currentData.moveCount++;
     ApplyUndoList(currentData.undoIndex);
 }
+// Redo the game many times
+function RedoMany(count) {
+    return __awaiter(this, void 0, void 0, function () {
+        var i;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    i = 0;
+                    _a.label = 1;
+                case 1:
+                    if (!(i < count)) return [3 /*break*/, 4];
+                    if (currentData.undoIndex >= currentData.undo.length - 1)
+                        return [2 /*return*/];
+                    Redo();
+                    return [4 /*yield*/, delay(undoDelay)];
+                case 2:
+                    _a.sent();
+                    _a.label = 3;
+                case 3:
+                    i++;
+                    return [3 /*break*/, 1];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
 // Apply an undo entry to the game
 function ApplyUndoList(index) {
     var l = currentData.undo[index];
@@ -115,8 +142,12 @@ function UpdateUndoBtns() {
         restartBtn.removeAttribute("disabled");
         undoTenBtn.removeAttribute("disabled");
     }
-    if (currentData.undoIndex >= currentData.undo.length - 1)
+    if (currentData.undoIndex >= currentData.undo.length - 1) {
         redoBtn.setAttribute("disabled", "true");
-    else
+        redoTenBtn.setAttribute("disabled", "true");
+    }
+    else {
         redoBtn.removeAttribute("disabled");
+        redoTenBtn.removeAttribute("disabled");
+    }
 }

@@ -52,10 +52,10 @@ var Block = /** @class */ (function () {
     Block.prototype.getTileColor = function () {
         // Set color
         if (this.isExit) {
-            return "#502020";
+            return currentData.finished ? greenColor : redColor;
         }
         else {
-            var randColorVal = Math.round(Math.random() * (45 - 30) + 30);
+            var randColorVal = Math.round(Math.random() * (randomColorMax - randomColorMin) + randomColorMin);
             return "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
         }
     };
@@ -143,6 +143,13 @@ var Block = /** @class */ (function () {
             RecordUndo();
             currentData.moveCount++;
             DisplayMoves();
+            if (this.isExit && this.pos.isEq(new vec2(1, 3)) && !currentData.finished) {
+                currentData.finished = true;
+                this.element.style.backgroundColor = greenColor;
+            }
+            if (currentData.moveCount >= autoHideTutorialMoveCount) {
+                HideTutorial();
+            }
         }
     };
     // While dragging, returns the maximum pixel position of the tile in the given direction
@@ -200,6 +207,7 @@ var GameData = /** @class */ (function () {
         this.undo = [];
         this.moveCount = 0;
         this.tiles = [];
+        this.finished = false;
     }
     return GameData;
 }());
@@ -239,6 +247,9 @@ function DisplayMoves() {
     moveCountText.innerHTML = currentData.moveCount.toString();
     moveCountLabel.innerHTML = currentData.moveCount === 1 ? "move" : "moves";
 }
+function HideTutorial() {
+    document.querySelector(".tutorial").classList.add("hidden");
+}
 // Get elements
 var area = document.getElementById("area");
 var moveCountText = document.getElementById("move-count");
@@ -258,4 +269,9 @@ document.body.addEventListener("dragover", function (event) {
 // Consts
 var areaSize = new vec2(4, 5);
 var undoDelay = 50;
+var redColor = "#502020";
+var greenColor = "#205020";
+var randomColorMin = 30;
+var randomColorMax = 45;
+var autoHideTutorialMoveCount = 5;
 var currentData;

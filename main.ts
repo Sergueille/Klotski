@@ -67,10 +67,10 @@ class Block {
     getTileColor() {
         // Set color
         if (this.isExit) {
-            return "#502020"
+            return currentData.finished? greenColor : redColor
         }
         else {
-            let randColorVal: number = Math.round(Math.random() * (45 - 30) + 30); 
+            let randColorVal: number = Math.round(Math.random() * (randomColorMax - randomColorMin) + randomColorMin); 
             return "#" + randColorVal.toString() + randColorVal.toString() + randColorVal.toString();
         }
     }
@@ -171,6 +171,15 @@ class Block {
             RecordUndo();
             currentData.moveCount++;
             DisplayMoves();
+
+            if (this.isExit && this.pos.isEq(new vec2(1, 3)) && !currentData.finished){
+                currentData.finished = true;
+                this.element.style.backgroundColor = greenColor;
+            }
+
+            if (currentData.moveCount >= autoHideTutorialMoveCount) {
+                HideTutorial();
+            }
         }
     }
 
@@ -228,6 +237,7 @@ class GameData {
     public undo: Array<Array<vec2>> = [];
     public moveCount: number = 0;
     public tiles: Array<Block> = [];
+    public finished: boolean = false;
 }
 
 // (Re)Starts the game!
@@ -270,6 +280,10 @@ function DisplayMoves() {
     moveCountLabel.innerHTML = currentData.moveCount === 1? "move" : "moves"; 
 }
 
+function HideTutorial() {
+    document.querySelector(".tutorial").classList.add("hidden");
+}
+
 // Get elements
 const area = document.getElementById("area")!!;
 const moveCountText = document.getElementById("move-count")!!;
@@ -293,5 +307,10 @@ document.body.addEventListener("dragover", event => {
 // Consts
 const areaSize = new vec2(4, 5);
 const undoDelay = 50;
+const redColor = "#502020";
+const greenColor = "#205020";
+const randomColorMin = 30;
+const randomColorMax = 45;
+const autoHideTutorialMoveCount = 5;
 
 let currentData: GameData;

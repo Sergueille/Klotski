@@ -2,6 +2,7 @@
 const undoBtn = document.getElementById("undo")!!;
 const redoBtn = document.getElementById("redo")!!;
 const undoTenBtn = document.getElementById("undo-ten")!!;
+const redoTenBtn = document.getElementById("redo-ten")!!;
 const restartBtn = document.getElementById("restart")!!;
 
 // Add an entry in the undo list
@@ -47,6 +48,15 @@ function Redo() {
     ApplyUndoList(currentData.undoIndex);
 }
 
+// Redo the game many times
+async function RedoMany(count: number) {
+    for (let i = 0; i < count; i++) {
+        if (currentData.undoIndex >= currentData.undo.length - 1) return;
+        Redo();
+        await delay(undoDelay);
+    }
+}
+
 // Apply an undo entry to the game
 function ApplyUndoList(index: number) {
     let l = currentData.undo[index];
@@ -72,8 +82,12 @@ function UpdateUndoBtns() {
         undoTenBtn.removeAttribute("disabled");
     }
 
-    if (currentData.undoIndex >= currentData.undo.length - 1)
+    if (currentData.undoIndex >= currentData.undo.length - 1) {
         redoBtn.setAttribute("disabled", "true")
-    else
+        redoTenBtn.setAttribute("disabled", "true")
+    }
+    else {
         redoBtn.removeAttribute("disabled")
+        redoTenBtn.removeAttribute("disabled")
+    }
 }

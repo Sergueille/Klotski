@@ -23,14 +23,28 @@ html {
 button, a.btn {
     background-color: var(--bg-lll);
     border: none;
-    border-radius: 10px;
+    border-radius: 1.5rem;
     padding: 5px 10px;
     margin: 5px;
     transition: 100ms;
     position: relative;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+button > *, .btn > * {
+    margin: 0 5px;
 }
 
 button:hover, .btn:hover {
+    transform: scale(110%);
+}
+
+button.circle:hover, .btn.circle:hover {
     transform: scale(120%);
 }
 
@@ -46,6 +60,10 @@ button.circle, .btn.circle {
     border-radius: 100%;
     width: 3rem;
     height: 3rem;
+}
+
+button.circle > *, .btn.circle > * {
+    margin: 0;
 }
 
 .btn-info {
@@ -85,6 +103,10 @@ body {
     justify-content: center;
 }
 
+.main > * {
+    margin: 25px;
+}
+
 #area {
     background-color: var(--bg-l);
     border-radius: 20px;
@@ -92,7 +114,6 @@ body {
     height: calc(var(--tile-size) * 5 + 60px);
     width: calc(var(--tile-size) * 4 + 50px);
     position: relative;
-    margin: 50px;
 
     display: grid;
     grid-template-columns: repeat(4, auto);
@@ -157,6 +178,7 @@ body {
     left: 0;
     height: 100%;
     width: 25rem;
+    z-index: 20;
 
     padding: 20px;
 }
@@ -215,4 +237,48 @@ body {
 .tile-list > li > p {
     margin-left: 20px;
     font-size: 1.5rem;
+}
+
+.tutorial {
+    transition: 200ms;
+    background-color: var(--bg-l);
+    border-radius: 10px;
+
+    width: 25rem;
+
+    padding: 20px;
+    overflow: hidden;
+}
+
+.tutorial.hidden {
+    opacity: 0;
+    margin: 0 !important;
+    transform: scale(0);
+    width: 0;
+}
+
+.tutorial > * {
+    margin: 5px 0;
+}
+
+.tutorial > button {
+    margin-top: 20px;
+}
+
+.tuto-title {
+    font-size: 1.5rem;
+}
+
+.target {
+    z-index: 10;
+    border: 4px dashed #10ff1010;
+    border-radius: 20px;
+    
+    pointer-events: none;
+
+    position: absolute;
+    width: calc((var(--tile-size) + 10px) * 2);
+    height: calc((var(--tile-size) + 10px) * 2);
+    top: calc((var(--tile-size) + 10px) * 3 + 5px);
+    left: calc(var(--tile-size) + 10px + 5px);
 }
