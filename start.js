@@ -1,1 +1,0 @@
-StartGame(0);
