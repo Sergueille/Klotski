@@ -186,6 +186,8 @@ class Block {
                 this.element.style.backgroundColor = greenColor;
             }
 
+            SaveGame();
+
             if (currentData.moveCount >= autoHideTutorialMoveCount) {
                 HideTutorial();
             }
@@ -249,6 +251,18 @@ class GameData {
     public finished: boolean = false;
 }
 
+function Setup() {
+    for (const game of data) {
+        // Init new game
+        game["gameData"] = new GameData();
+        game["gameData"].undo = [];
+
+        for (const tile of game["tiles"]) {
+            game["gameData"].tiles.push(tile);
+        }
+    }
+}
+
 // (Re)Starts the game!
 function StartGame(index: number) {
     // Destor previous tiles
@@ -258,26 +272,13 @@ function StartGame(index: number) {
         }
     }
 
-    if (data[index]["gameData"] === null) {
+    currentData = data[index]["gameData"];
+    for (const tile of currentData.tiles) {
+        tile.setDisplay(true, area);
+    }
 
-        // Init new game
-        data[index]["gameData"] = new GameData();
-        currentData = data[index]["gameData"];
-        currentData.undo = [];
-
-        for (const tile of data[index]["tiles"]) {
-            tile.setDisplay(true, area);
-            currentData.tiles.push(tile);
-        }
-
+    if (currentData.undo.length === 0)
         RecordUndo();
-    }
-    else {
-        currentData = data[index]["gameData"];
-        for (const tile of currentData.tiles) {
-            tile.setDisplay(true, area);
-        }
-    }
 
     UpdateUndoBtns();
     DisplayMoves();
@@ -287,6 +288,10 @@ function StartGame(index: number) {
 function DisplayMoves() {
     moveCountText.innerHTML = currentData.moveCount.toString();
     moveCountLabel.innerHTML = currentData.moveCount === 1? "move" : "moves"; 
+}
+
+function ShowTutorial() {
+    document.querySelector(".tutorial").classList.remove("hidden");
 }
 
 function HideTutorial() {

@@ -155,6 +155,7 @@ var Block = /** @class */ (function () {
                 currentData.finished = true;
                 this.element.style.backgroundColor = greenColor;
             }
+            SaveGame();
             if (currentData.moveCount >= autoHideTutorialMoveCount) {
                 HideTutorial();
             }
@@ -219,6 +220,18 @@ var GameData = /** @class */ (function () {
     }
     return GameData;
 }());
+function Setup() {
+    for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
+        var game = data_1[_i];
+        // Init new game
+        game["gameData"] = new GameData();
+        game["gameData"].undo = [];
+        for (var _a = 0, _b = game["tiles"]; _a < _b.length; _a++) {
+            var tile = _b[_a];
+            game["gameData"].tiles.push(tile);
+        }
+    }
+}
 // (Re)Starts the game!
 function StartGame(index) {
     // Destor previous tiles
@@ -228,25 +241,13 @@ function StartGame(index) {
             tile.setDisplay(false);
         }
     }
-    if (data[index]["gameData"] === null) {
-        // Init new game
-        data[index]["gameData"] = new GameData();
-        currentData = data[index]["gameData"];
-        currentData.undo = [];
-        for (var _b = 0, _c = data[index]["tiles"]; _b < _c.length; _b++) {
-            var tile = _c[_b];
-            tile.setDisplay(true, area);
-            currentData.tiles.push(tile);
-        }
+    currentData = data[index]["gameData"];
+    for (var _b = 0, _c = currentData.tiles; _b < _c.length; _b++) {
+        var tile = _c[_b];
+        tile.setDisplay(true, area);
+    }
+    if (currentData.undo.length === 0)
         RecordUndo();
-    }
-    else {
-        currentData = data[index]["gameData"];
-        for (var _d = 0, _e = currentData.tiles; _d < _e.length; _d++) {
-            var tile = _e[_d];
-            tile.setDisplay(true, area);
-        }
-    }
     UpdateUndoBtns();
     DisplayMoves();
 }
@@ -254,6 +255,9 @@ function StartGame(index) {
 function DisplayMoves() {
     moveCountText.innerHTML = currentData.moveCount.toString();
     moveCountLabel.innerHTML = currentData.moveCount === 1 ? "move" : "moves";
+}
+function ShowTutorial() {
+    document.querySelector(".tutorial").classList.remove("hidden");
 }
 function HideTutorial() {
     document.querySelector(".tutorial").classList.add("hidden");

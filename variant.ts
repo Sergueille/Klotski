@@ -7,6 +7,11 @@ function ToggleVariantPanel() {
     variantPanel.classList.toggle("hidden")
 }
 
+function HideVariantPanel() {
+    if (!variantPanel.classList.contains("hidden"))
+        variantPanel.classList.add("hidden")
+}
+
 // Populate panel list
 for (let i = 0; i < data.length; i++) {
     const obj = data[i];
@@ -14,7 +19,10 @@ for (let i = 0; i < data.length; i++) {
     let newEl = variantTemplate.cloneNode(true) as HTMLElement;
     const newID = "variant" + i.toString();
     newEl.id = newID;
-    newEl.addEventListener("click", () => StartGame(i))
+    newEl.addEventListener("click", () => {
+        HideVariantPanel();
+        StartGame(i);
+    });
     variantList.appendChild(newEl);
 
     document.querySelector("#" + newID + " > .tile-list-txt > .variant-title").innerHTML = obj.name;

@@ -134,6 +134,8 @@ body {
     position: absolute;
     border-radius: 15px;
     transition: 200ms;
+
+    border: 3px solid var(--bg);
 }
 
 .small-block {

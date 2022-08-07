@@ -1,1 +1,3 @@
-StartGame(0)
+Setup();
+StartGame(0);
+LoadGame();
