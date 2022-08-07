@@ -26,7 +26,9 @@ var Block = /** @class */ (function () {
             this.element.style.backgroundColor = this.getTileColor();
             // Assign events
             this.element.addEventListener("dragstart", function (ev) { return _this.onStartDrag(_this, ev); });
+            this.element.addEventListener("touchstart", function (ev) { return _this.onStartDrag(_this, null, ev); });
             this.element.addEventListener("dragend", function (ev) { return _this.onEndDrag(_this, ev); });
+            this.element.addEventListener("touchend", function (ev) { return _this.onEndDrag(_this, ev); });
             // Set positon
             this.setPos(this.pos);
         }
@@ -90,18 +92,24 @@ var Block = /** @class */ (function () {
         return new vec2(this.element.offsetLeft - 5, this.element.offsetTop - 5);
     };
     // Called by event (in constructor)
-    Block.prototype.onStartDrag = function (obj, event) {
+    Block.prototype.onStartDrag = function (obj, event, touchEvent) {
         var _a;
+        if (touchEvent === void 0) { touchEvent = null; }
         draggedBlock = obj;
-        obj.dragStartMousePos = new vec2(event.screenX, event.screenY);
+        obj.dragStartMousePos = event
+            ? new vec2(event.screenX, event.screenY)
+            : new vec2(touchEvent.touches[0].screenX, touchEvent.touches[0].screenY);
         obj.dragStartPixelPos = obj.getPixelPos();
         obj.dragDirection = null;
         obj.element.style.transition = "none";
-        (_a = event.dataTransfer) === null || _a === void 0 ? void 0 : _a.setDragImage(new Image(), 0, 0);
+        (_a = event === null || event === void 0 ? void 0 : event.dataTransfer) === null || _a === void 0 ? void 0 : _a.setDragImage(new Image(), 0, 0);
     };
     // Called by event (in constructor)
-    Block.prototype.onDrag = function (obj, event) {
-        var mousePos = new vec2(event.screenX, event.screenY);
+    Block.prototype.onDrag = function (obj, event, touchEvent) {
+        if (touchEvent === void 0) { touchEvent = null; }
+        var mousePos = event
+            ? new vec2(event.screenX, event.screenY)
+            : new vec2(touchEvent.touches[0].screenX, touchEvent.touches[0].screenY);
         var delta = mousePos.sub(obj.dragStartMousePos);
         if (obj.dragDirection === null)
             obj.dragDirection = Math.abs(delta.y) > Math.abs(delta.x);
@@ -265,6 +273,9 @@ var tileSize = document.querySelector(".bg-tile").clientWidth + 10;
 var draggedBlock = null;
 document.body.addEventListener("dragover", function (event) {
     draggedBlock.onDrag(draggedBlock, event);
+});
+document.body.addEventListener("touchmove", function (event) {
+    draggedBlock.onDrag(draggedBlock, null, event);
 });
 // Consts
 var areaSize = new vec2(4, 5);

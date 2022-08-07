@@ -36,7 +36,9 @@ class Block {
             
             // Assign events
             this.element.addEventListener("dragstart", ev => this.onStartDrag(this, ev));
+            this.element.addEventListener("touchstart", ev => this.onStartDrag(this, null, ev));
             this.element.addEventListener("dragend", ev => this.onEndDrag(this, ev));
+            this.element.addEventListener("touchend", ev => this.onEndDrag(this, ev));
 
             // Set positon
             this.setPos(this.pos);
@@ -109,18 +111,25 @@ class Block {
     }
 
     // Called by event (in constructor)
-    onStartDrag(obj: Block, event: DragEvent) {
+    onStartDrag(obj: Block, event: DragEvent, touchEvent: TouchEvent = null) {
         draggedBlock = obj;
-        obj.dragStartMousePos = new vec2(event.screenX, event.screenY);
+        obj.dragStartMousePos = event
+            ? new vec2(event.screenX, event.screenY)
+            : new vec2(touchEvent.touches[0].screenX, touchEvent.touches[0].screenY);
+
         obj.dragStartPixelPos = obj.getPixelPos();
         obj.dragDirection = null;
         obj.element.style.transition = "none";
-        event.dataTransfer?.setDragImage(new Image(), 0, 0);
+
+        event?.dataTransfer?.setDragImage(new Image(), 0, 0);
     }
 
     // Called by event (in constructor)
-    onDrag(obj: Block, event: DragEvent) {
-        const mousePos: vec2 = new vec2(event.screenX, event.screenY);
+    onDrag(obj: Block, event: DragEvent, touchEvent: TouchEvent = null) {
+        const mousePos: vec2 = event
+            ? new vec2(event.screenX, event.screenY)
+            : new vec2(touchEvent.touches[0].screenX, touchEvent.touches[0].screenY);
+
         let delta: vec2 = mousePos.sub(obj.dragStartMousePos);
 
         if (obj.dragDirection === null)
@@ -152,7 +161,7 @@ class Block {
     }
 
     // Called by event (in constructor)
-    onEndDrag(obj: Block, event: DragEvent) {
+    onEndDrag(obj: Block, event: Event) {
         event.preventDefault();
 
         let deltaTile: vec2 = this.getPixelPos().divide(tileSize).round().sub(this.pos);
@@ -302,6 +311,9 @@ const tileSize = document.querySelector(".bg-tile")!!.clientWidth + 10;
 let draggedBlock: Block = null;
 document.body.addEventListener("dragover", event => {
     draggedBlock.onDrag(draggedBlock, event);
+});
+document.body.addEventListener("touchmove", event => {
+    draggedBlock.onDrag(draggedBlock, null, event);
 });
 
 // Consts

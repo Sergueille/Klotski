@@ -208,6 +208,8 @@ body {
 
 .tile-list {
     padding: 0;
+    overflow: scroll;
+    max-height: calc(100vh - 2rem - 50px);
 }
 
 .tile-list > li {
@@ -332,17 +334,31 @@ body {
     }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 800px) and (min-height: 800px) {
+    .tutorial {
+        left: unset;
+    }
+
+    .main > * {
+        margin: 5px;
+    }
+
+    .moves {
+        margin-top: 0;
+    }
+
+    .right > * {
+        margin: 5px;
+    }
+}
+
+@media screen and (max-width: 550px)  {
     .main {
         flex-direction: column;
     }
 
     .right, .btn-list {
         flex-direction: row;
-    }
-
-    .tutorial {
-        left: unset;
     }
 }
 
@@ -354,11 +370,31 @@ body {
     .right {
         flex-direction: column;
     }
+
+    .panel {
+        width: 100vw;
+    }
+
+    .panel.hidden {
+        left: -100vw;
+    }
+    
+    .btn-list {
+        padding: 0;
+    }
 }
 
-@media screen and (max-height: 500px) {
+@media screen and (max-height: 550px) {
     * {
         --tile-size: 60px;
+    }
+
+    .block {
+        border-radius: 10px;
+    }
+
+    #area {
+        border-radius: 15px;
     }
 
     .right {
@@ -366,8 +402,41 @@ body {
     }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 400px), screen and (max-width: 750px) {
     * {
         --tile-size: 60px;
+    }
+
+    .block {
+        border-radius: 10px;
+    }
+
+    #area {
+        border-radius: 15px;
+    }
+}
+
+@media screen and (min-width: 600px) and (max-height: 600px) {
+    .tile-list {
+        display: grid;
+        grid-template-columns: 50% 50%;
+    }
+
+    .tile-list > li {
+        margin: 5px;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .main > * {
+        margin: 5px;
+    }
+
+    .moves {
+        margin-top: 0;
+    }
+
+    .right > * {
+        margin: 5px;
     }
 }
