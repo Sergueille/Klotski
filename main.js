@@ -49,12 +49,13 @@ var Block = /** @class */ (function () {
         // Set pos
         smallEL.style.left = (this.pos.x * tileSize) + 5 + "px";
         smallEL.style.top = (this.pos.y * tileSize) + 5 + "px";
-        smallEL.style.backgroundColor = this.getTileColor();
+        smallEL.style.backgroundColor = this.getTileColor(true);
     };
-    Block.prototype.getTileColor = function () {
+    Block.prototype.getTileColor = function (forceRed) {
+        if (forceRed === void 0) { forceRed = false; }
         // Set color
         if (this.isExit) {
-            return currentData.finished ? greenColor : redColor;
+            return !forceRed && currentData.finished ? greenColor : redColor;
         }
         else {
             var randColorVal = Math.round(Math.random() * (randomColorMax - randomColorMin) + randomColorMin);
@@ -150,11 +151,13 @@ var Block = /** @class */ (function () {
         if (deltaTile.x != 0 || deltaTile.y != 0) {
             RecordUndo();
             currentData.moveCount++;
-            DisplayMoves();
             if (this.isExit && this.pos.isEq(new vec2(1, 3)) && !currentData.finished) {
                 currentData.finished = true;
                 this.element.style.backgroundColor = greenColor;
+                if (currentData.moveCount < currentData.bestMoves)
+                    currentData.bestMoves = currentData.moveCount;
             }
+            DisplayMoves();
             SaveGame();
             if (currentData.moveCount >= autoHideTutorialMoveCount) {
                 HideTutorial();
@@ -217,6 +220,7 @@ var GameData = /** @class */ (function () {
         this.moveCount = 0;
         this.tiles = [];
         this.finished = false;
+        this.bestMoves = 999999999;
     }
     return GameData;
 }());
@@ -255,6 +259,15 @@ function StartGame(index) {
 function DisplayMoves() {
     moveCountText.innerHTML = currentData.moveCount.toString();
     moveCountLabel.innerHTML = currentData.moveCount === 1 ? "move" : "moves";
+    if (currentData.finished) {
+        bestMoveCountText.classList.remove("disabled");
+        bestMoveCountLabel.classList.remove("disabled");
+        bestMoveCountText.innerHTML = currentData.bestMoves.toString();
+    }
+    else {
+        bestMoveCountText.classList.add("disabled");
+        bestMoveCountLabel.classList.add("disabled");
+    }
 }
 function ShowTutorial() {
     document.querySelector(".tutorial").classList.remove("hidden");
@@ -266,6 +279,8 @@ function HideTutorial() {
 var area = document.getElementById("area");
 var moveCountText = document.getElementById("move-count");
 var moveCountLabel = document.getElementById("move-count-label");
+var bestMoveCountText = document.getElementById("move-count-best");
+var bestMoveCountLabel = document.getElementById("move-count-label-best");
 // Create bg tiles
 for (var i = 0; i < 20; i++) {
     var newEl = document.createElement("div");
@@ -289,4 +304,5 @@ var greenColor = "#205020";
 var randomColorMin = 30;
 var randomColorMax = 45;
 var autoHideTutorialMoveCount = 5;
+var cookieValidity = 365; // In days
 var currentData;

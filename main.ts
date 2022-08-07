@@ -63,13 +63,13 @@ class Block {
         smallEL.style.left = (this.pos.x * tileSize) + 5 + "px";
         smallEL.style.top = (this.pos.y * tileSize) + 5 + "px";
 
-        smallEL.style.backgroundColor = this.getTileColor();
+        smallEL.style.backgroundColor = this.getTileColor(true);
     }
 
-    getTileColor() {
+    getTileColor(forceRed: boolean = false) {
         // Set color
         if (this.isExit) {
-            return currentData.finished? greenColor : redColor
+            return !forceRed && currentData.finished? greenColor : redColor
         }
         else {
             let randColorVal: number = Math.round(Math.random() * (randomColorMax - randomColorMin) + randomColorMin); 
@@ -179,13 +179,16 @@ class Block {
         {
             RecordUndo();
             currentData.moveCount++;
-            DisplayMoves();
 
             if (this.isExit && this.pos.isEq(new vec2(1, 3)) && !currentData.finished){
                 currentData.finished = true;
                 this.element.style.backgroundColor = greenColor;
+
+                if (currentData.moveCount < currentData.bestMoves) 
+                    currentData.bestMoves = currentData.moveCount;
             }
 
+            DisplayMoves();
             SaveGame();
 
             if (currentData.moveCount >= autoHideTutorialMoveCount) {
@@ -249,6 +252,7 @@ class GameData {
     public moveCount: number = 0;
     public tiles: Array<Block> = [];
     public finished: boolean = false;
+    public bestMoves: number = 999999999;
 }
 
 function Setup() {
@@ -288,6 +292,17 @@ function StartGame(index: number) {
 function DisplayMoves() {
     moveCountText.innerHTML = currentData.moveCount.toString();
     moveCountLabel.innerHTML = currentData.moveCount === 1? "move" : "moves"; 
+
+    if (currentData.finished) {
+        bestMoveCountText.classList.remove("disabled");
+        bestMoveCountLabel.classList.remove("disabled");
+
+        bestMoveCountText.innerHTML = currentData.bestMoves.toString();
+    } 
+    else {
+        bestMoveCountText.classList.add("disabled");
+        bestMoveCountLabel.classList.add("disabled");
+    }
 }
 
 function ShowTutorial() {
@@ -302,6 +317,8 @@ function HideTutorial() {
 const area = document.getElementById("area")!!;
 const moveCountText = document.getElementById("move-count")!!;
 const moveCountLabel = document.getElementById("move-count-label")!!;
+const bestMoveCountText = document.getElementById("move-count-best")!!;
+const bestMoveCountLabel = document.getElementById("move-count-label-best")!!;
 
 // Create bg tiles
 for (let i = 0; i < 20; i++) {
@@ -329,5 +346,6 @@ const greenColor = "#205020";
 const randomColorMin = 30;
 const randomColorMax = 45;
 const autoHideTutorialMoveCount = 5;
+const cookieValidity = 365; // In days
 
 let currentData: GameData;

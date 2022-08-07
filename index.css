@@ -1,4 +1,5 @@
 * {
+    --bg-d: #080808;
     --bg: #151515;
     --bg-l: #222;
     --bg-ll: #252525;
@@ -22,6 +23,9 @@ html {
 
 body {
     overflow: hidden;
+
+    --bg-size: 50px;
+    background: repeating-linear-gradient(45deg, var(--bg-d) 0, var(--bg-d) var(--bg-size), var(--bg) var(--bg-size), var(--bg) calc(var(--bg-size) * 2));
 }
 
 button, a.btn {
@@ -135,7 +139,7 @@ body {
     border-radius: 15px;
     transition: 200ms;
 
-    border: 3px solid var(--bg);
+    border: 2px solid var(--bg);
 }
 
 .small-block {
@@ -167,12 +171,29 @@ body {
 }
 
 .moves {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
     text-align: center;
 }
 
-#move-count {
+.moves > * {
+    margin: 0 5px;
+}
+
+#move-count, #move-count-best {
     font-size: 2rem;
     font-weight: 1000;
+}
+
+#move-count-best, #move-count-label-best {
+    transition: 200ms;
+}
+
+#move-count-best.disabled, #move-count-label-best.disabled {
+    font-size: 0rem;
 }
 
 .panel {
@@ -293,7 +314,7 @@ body {
 
 .target {
     z-index: 10;
-    border: 4px dashed #10ff1010;
+    border: 4px dashed #10ff1020;
     border-radius: 20px;
     
     pointer-events: none;
@@ -330,6 +351,12 @@ body {
     }
 }
 
+@media screen and (max-width: 800px) {
+    .tutorial {
+        left: unset;
+    }
+}
+
 @media screen and (max-height: 900px), screen and (max-width: 700px) {
     * {
         --tile-size: 100px;
@@ -337,10 +364,6 @@ body {
 }
 
 @media screen and (max-width: 800px) and (min-height: 800px) {
-    .tutorial {
-        left: unset;
-    }
-
     .main > * {
         margin: 5px;
     }
@@ -359,7 +382,7 @@ body {
         flex-direction: column;
     }
 
-    .right, .btn-list {
+    .right, .btn-list, .moves {
         flex-direction: row;
     }
 }
@@ -440,5 +463,14 @@ body {
 
     .right > * {
         margin: 5px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .tutorial {
+        width: unset;
+        left: 0;
+        right: 0;
+        margin: 20px;
     }
 }

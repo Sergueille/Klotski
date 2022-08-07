@@ -12,8 +12,8 @@
     <script src="main.js" defer="defer"></script>
     <script src="data.js" defer="defer"></script>
     <script src="cookies.js" defer="defer"></script>
-    <script src="start.js" defer="defer"></script>
     <script src="variant.js" defer="defer"></script>
+    <script src="start.js" defer="defer"></script>
 </head>
 <body>
     <div id="variants" class="panel hidden">
@@ -55,8 +55,10 @@
         <div class="right">
             
             <div class="moves">
-                <span id="move-count">99</span><br>
-                <span id="move-count-label">moves</span><br>
+                <span id="move-count">99</span>
+                <span id="move-count-label">moves</span>
+                <span id="move-count-best" class="disabled">99</span>
+                <span id="move-count-label-best" class="disabled">best solution</span>
             </div>
             <div class="btn-list">
                 <button class="circle" id="undo" onclick="Undo()">

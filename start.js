@@ -1,3 +1,4 @@
 Setup();
-StartGame(0);
+SetupVariants();
 LoadGame();
+StartGame(0);

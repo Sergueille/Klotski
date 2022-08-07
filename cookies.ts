@@ -3,12 +3,13 @@ function SaveGame() {
     for (const game of data) {
         saveData.push({
             finished: game.gameData?.finished,
+            bestMoves: game.gameData?.bestMoves,
         });
     }
 
     const dataString = JSON.stringify(saveData);
 
-    document.cookie = `gameData=${dataString}; max-age=10; SameSite=lax`;
+    document.cookie = `gameData=${dataString}; max-age=${86400 * cookieValidity}; SameSite=lax`;
 }
 
 function LoadGame() {
@@ -25,6 +26,7 @@ function LoadGame() {
         let gameData = JSON.parse(obj["gameData"]);
         for (let i = 0; i < data.length; i++) {
             data[i].gameData.finished = gameData[i].finished
+            data[i].gameData.bestMoves = gameData[i].bestMoves
         }
     }
     else
