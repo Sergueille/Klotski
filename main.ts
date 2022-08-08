@@ -253,6 +253,7 @@ class GameData {
     public tiles: Array<Block> = [];
     public finished: boolean = false;
     public bestMoves: number = 999999999;
+    public puzzleName: string = "";
 }
 
 function Setup() {
@@ -264,6 +265,8 @@ function Setup() {
         for (const tile of game["tiles"]) {
             game["gameData"].tiles.push(tile);
         }
+
+        game["gameData"].puzzleName = game.name;
     }
 }
 

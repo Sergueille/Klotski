@@ -1,10 +1,14 @@
 function SaveGame() {
-    let saveData: Array<Object> = [];
+    let saveData = {
+        games: {},
+        currentPuzzle: currentData.puzzleName,
+    };
+
     for (const game of data) {
-        saveData.push({
+        saveData.games[game.name] = {
             finished: game.gameData?.finished,
             bestMoves: game.gameData?.bestMoves,
-        });
+        };
     }
 
     const dataString = JSON.stringify(saveData);
@@ -14,7 +18,6 @@ function SaveGame() {
 
 function LoadGame() {
     if (document.cookie != "") {
-        console.log(document.cookie)
         let regex = new RegExp("([^=]*)\s*=\s*([^;]*)(?:;\s*)?");
         let match = regex.exec(document.cookie)
 
@@ -23,12 +26,25 @@ function LoadGame() {
             obj[match[i + 1]] = match[i + 2];
         }
 
-        let gameData = JSON.parse(obj["gameData"]);
+        let saveData = JSON.parse(obj["gameData"]);
+        let startIndex = 0;
         for (let i = 0; i < data.length; i++) {
-            data[i].gameData.finished = gameData[i].finished
-            data[i].gameData.bestMoves = gameData[i].bestMoves
+            let thisGameData = saveData.games[data[i].name];
+            if (thisGameData) {
+                data[i].gameData.finished = thisGameData.finished
+                data[i].gameData.bestMoves = thisGameData.bestMoves
+            }
+
+            if (saveData.currentPuzzle === data[i].name) {
+                startIndex = i;
+            }
         }
+
+        
+        StartGame(startIndex);
     }
-    else
+    else {
         ShowTutorial();
+        StartGame(0);
+    }
 }

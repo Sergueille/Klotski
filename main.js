@@ -221,6 +221,7 @@ var GameData = /** @class */ (function () {
         this.tiles = [];
         this.finished = false;
         this.bestMoves = 999999999;
+        this.puzzleName = "";
     }
     return GameData;
 }());
@@ -234,6 +235,7 @@ function Setup() {
             var tile = _b[_a];
             game["gameData"].tiles.push(tile);
         }
+        game["gameData"].puzzleName = game.name;
     }
 }
 // (Re)Starts the game!
