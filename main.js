@@ -163,6 +163,7 @@ var Block = /** @class */ (function () {
                 HideTutorial();
             }
         }
+        draggedBlock = null;
     };
     // While dragging, returns the maximum pixel position of the tile in the given direction
     // FIXME: not working with multiple tiles (?)
@@ -293,10 +294,10 @@ for (var i = 0; i < 20; i++) {
 var tileSize = document.querySelector(".bg-tile").clientWidth + 10;
 var draggedBlock = null;
 document.body.addEventListener("dragover", function (event) {
-    draggedBlock.onDrag(draggedBlock, event);
+    draggedBlock === null || draggedBlock === void 0 ? void 0 : draggedBlock.onDrag(draggedBlock, event);
 });
 document.body.addEventListener("touchmove", function (event) {
-    draggedBlock.onDrag(draggedBlock, null, event);
+    draggedBlock === null || draggedBlock === void 0 ? void 0 : draggedBlock.onDrag(draggedBlock, null, event);
 });
 // Consts
 var areaSize = new vec2(4, 5);

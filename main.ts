@@ -195,6 +195,8 @@ class Block {
                 HideTutorial();
             }
         }
+
+        draggedBlock = null;
     }
 
     // While dragging, returns the maximum pixel position of the tile in the given direction
@@ -335,10 +337,10 @@ const tileSize = document.querySelector(".bg-tile")!!.clientWidth + 10;
 
 let draggedBlock: Block = null;
 document.body.addEventListener("dragover", event => {
-    draggedBlock.onDrag(draggedBlock, event);
+    draggedBlock?.onDrag(draggedBlock, event);
 });
 document.body.addEventListener("touchmove", event => {
-    draggedBlock.onDrag(draggedBlock, null, event);
+    draggedBlock?.onDrag(draggedBlock, null, event);
 });
 
 // Consts
