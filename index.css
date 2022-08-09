@@ -231,7 +231,7 @@ body {
 
 .tile-list {
     padding: 0;
-    overflow: scroll;
+    overflow: auto;
     max-height: calc(100vh - 2rem - 50px);
 }
 
