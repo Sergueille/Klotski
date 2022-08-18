@@ -151,7 +151,7 @@ var Block = /** @class */ (function () {
         if (deltaTile.x != 0 || deltaTile.y != 0) {
             RecordUndo();
             currentData.moveCount++;
-            if (this.isExit && this.pos.isEq(new vec2(1, 3)) && !currentData.finished) {
+            if (this.isExit && this.pos.isEq(new vec2(1, 3))) {
                 currentData.finished = true;
                 this.element.style.backgroundColor = greenColor;
                 if (currentData.moveCount < currentData.bestMoves)

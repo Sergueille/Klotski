@@ -1,3 +1,4 @@
+var deletePanel = document.getElementById("delete-panel");
 function SaveGame() {
     var _a, _b;
     var saveData = {
@@ -24,28 +25,38 @@ function LoadGame() {
             for (var i = 0; i < match.length; i += 3) {
                 obj[match[i + 1]] = match[i + 2];
             }
-            var saveData = JSON.parse(obj["gameData"]);
-            var startIndex = 0;
-            for (var i = 0; i < data.length; i++) {
-                var thisGameData = saveData.games[data[i].name];
-                if (thisGameData) {
-                    data[i].gameData.finished = thisGameData.finished;
-                    data[i].gameData.bestMoves = thisGameData.bestMoves;
+            if (obj.hasOwnProperty("gameData") && obj["gameData"].trim() != "") {
+                var saveData = JSON.parse(obj["gameData"]);
+                var startIndex = 0;
+                for (var i = 0; i < data.length; i++) {
+                    var thisGameData = saveData.games[data[i].name];
+                    if (thisGameData) {
+                        data[i].gameData.finished = thisGameData.finished;
+                        data[i].gameData.bestMoves = thisGameData.bestMoves;
+                    }
+                    if (saveData.currentPuzzle === data[i].name) {
+                        startIndex = i;
+                    }
                 }
-                if (saveData.currentPuzzle === data[i].name) {
-                    startIndex = i;
-                }
+                StartGame(startIndex);
+                return;
             }
-            StartGame(startIndex);
         }
         catch (error) {
             alert("Oops! The webside couldn't load your progress from the cookies files. Please report this error message to the developper:\n\n"
                 + error + "\n" + document.cookie);
-            StartGame(0);
         }
     }
-    else {
-        ShowTutorial();
-        StartGame(0);
-    }
+    ShowTutorial();
+    StartGame(0);
+}
+function DeleteCookies() {
+    ToggleDeletePanel();
+}
+function DeleteCookiesWithoutPanel() {
+    document.cookie = "gameData=;";
+    window.location.reload();
+}
+function ToggleDeletePanel() {
+    deletePanel.classList.toggle("hidden");
 }

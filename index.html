@@ -32,6 +32,21 @@
             </li>
         </ul>
     </div>
+    <div id="delete-panel" class="panel hidden">
+        <p class="panel-title">Are you sure?</p>
+        <button class="panel-close circle" onclick="ToggleDeletePanel()">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <p>Your are going to delete all your progress... Are you sure?</p>
+        <button onclick="DeleteCookiesWithoutPanel()">
+            <span class="material-symbols-outlined">delete</span>
+            Absolutely
+        </button>
+        <button onclick="ToggleDeletePanel()">
+            <span class="material-symbols-outlined">undo</span>
+            No
+        </button>
+    </div>
     <div class="main">
         <div class="tutorial hidden">
             <p class="tuto-title">Welcome!</p>
@@ -87,9 +102,9 @@
                     <span class="material-symbols-outlined">content_copy</span>
                     <div class="btn-info">Select variant</div>
                 </button>
-                <button class="circle" id="open-bookmarks">
-                    <span class="material-symbols-outlined">assistant</span>
-                    <div class="btn-info">See bookmarks</div>
+                <button class="circle" id="open-bookmarks" onclick="DeleteCookies()">
+                    <span class="material-symbols-outlined">delete_forever</span>
+                    <div class="btn-info">Delete progress</div>
                 </button>
             </div>
         </div>
