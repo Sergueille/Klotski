@@ -37,6 +37,11 @@ var Block = /** @class */ (function () {
             this.element = null;
         }
     };
+    Block.prototype.forceUpdateDisplay = function () {
+        var oldParent = this.element.parentElement;
+        this.setDisplay(false);
+        this.setDisplay(true, oldParent);
+    };
     // Create a small HTMLElement of the tile, to show in side panels
     Block.prototype.smallDisplay = function (parent, tileSize) {
         // Create element
@@ -298,6 +303,16 @@ document.body.addEventListener("dragover", function (event) {
 });
 document.body.addEventListener("touchmove", function (event) {
     draggedBlock === null || draggedBlock === void 0 ? void 0 : draggedBlock.onDrag(draggedBlock, null, event);
+});
+addEventListener("resize", function () {
+    var newTileSize = document.querySelector(".bg-tile").clientWidth + 10;
+    if (newTileSize != tileSize) {
+        tileSize = newTileSize;
+        for (var _i = 0, _a = currentData.tiles; _i < _a.length; _i++) {
+            var tile = _a[_i];
+            tile.forceUpdateDisplay();
+        }
+    }
 });
 // Consts
 var areaSize = new vec2(4, 5);

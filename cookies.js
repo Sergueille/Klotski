@@ -43,7 +43,7 @@ function LoadGame() {
             }
         }
         catch (error) {
-            alert("Oops! The webside couldn't load your progress from the cookies files. Please report this error message to the developper:\n\n"
+            alert("Oops! The website couldn't load your progress from the cookies files: "
                 + error + "\n" + document.cookie);
         }
     }

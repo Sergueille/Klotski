@@ -49,6 +49,12 @@ class Block {
         }
     }
 
+    forceUpdateDisplay() {
+        let oldParent = this.element.parentElement;
+        this.setDisplay(false);
+        this.setDisplay(true, oldParent);
+    }
+
     // Create a small HTMLElement of the tile, to show in side panels
     smallDisplay(parent: HTMLElement, tileSize: number) {
         // Create element
@@ -333,7 +339,7 @@ for (let i = 0; i < 20; i++) {
 }
 
 // Get tile size
-const tileSize = document.querySelector(".bg-tile")!!.clientWidth + 10;
+let tileSize = document.querySelector(".bg-tile")!!.clientWidth + 10;
 
 let draggedBlock: Block = null;
 document.body.addEventListener("dragover", event => {
@@ -341,6 +347,19 @@ document.body.addEventListener("dragover", event => {
 });
 document.body.addEventListener("touchmove", event => {
     draggedBlock?.onDrag(draggedBlock, null, event);
+});
+
+addEventListener("resize", () => {
+    let newTileSize = document.querySelector(".bg-tile")!!.clientWidth + 10;
+
+    if (newTileSize != tileSize)
+    {
+        tileSize = newTileSize;
+        
+        for (let tile of currentData.tiles) {
+            tile.forceUpdateDisplay();
+        }
+    }
 });
 
 // Consts
